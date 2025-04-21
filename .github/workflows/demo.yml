@@ -18,6 +18,9 @@ jobs:
   build:
     needs: test
     runs-on: ubuntu-latest
+    # outputs can be used to define outputs of our choice
+    outputs:
+      script-file: ${{ steps.publish.outputs.script-file }}
     steps:
       - name: Get code
         uses: actions/checkout@v3
@@ -25,6 +28,14 @@ jobs:
         run: npm ci
       - name: Build website
         run: npm run build
+      - name: Publish JS filename
+        # Set the id name to use to access the output
+        id: publish
+        # This command would help get the file 'index.d590f20c.js' in the dist/asset folder
+        # This would write some data into an output file managed by GitHub
+        run: find dist/assets/*.js -type f -execdir echo 'script-file={}' >> $GITHUB_OUTPUT ';'
+        # old syntax, would not be supported by GitHub in the future
+        # run: find dist/assets/*.js -type f -execdir echo '::set-output name=script-file::{}' ';'
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         # with key is used to add some additional configuration
@@ -47,5 +58,8 @@ jobs:
       # view contents of the downloaded files
       - name: Output contents
         run: ls
+        # get contents from the output file
+      - name: Output filename
+        run: echo "${{ needs.build.outputs.script-file }}"
       - name: Deploy
         run: echo "Deploying..."
