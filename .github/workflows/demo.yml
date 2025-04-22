@@ -9,6 +9,16 @@ jobs:
     steps:
       - name: Get code
         uses: actions/checkout@v3
+      # Add caching to reduce installation time
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        # specify the path where the cache would be stored and can be reused
+        with:
+          path: ~/.npm
+          # The key is used to retrieve the cache in the future and can be used to discard it or change it
+          # Use hasFiles function to specify where to get the dependensices
+          # package-lock.json specifies all the dependencies of the project and where they can be got
+          key: deps-node-modules-${{ hasFiles('**/package-lock.json') }}
       - name: Install dependencies
         run: npm ci
       - name: Lint code
@@ -24,6 +34,16 @@ jobs:
     steps:
       - name: Get code
         uses: actions/checkout@v3
+      # Add caching to reduce installation time
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        # specify the path where the cache would be stored and can be reused
+        with:
+          path: ~/.npm
+          # The key is used to retrieve the cache in the future and can be used to discard it or change it
+          # Use hasFiles function to specify where to get the dependensices
+          # package-lock.json specifies all the dependencies of the project and where they can be got
+          key: deps-node-modules-${{ hasFiles('**/package-lock.json') }}
       - name: Install dependencies
         run: npm ci
       - name: Build website
